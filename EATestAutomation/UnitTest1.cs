@@ -1,4 +1,4 @@
-using EAApplicationTest.Pages;
+using EaApplicationTest.Pages;
 using EaFramework.Config;
 using EAFramework.Config;
 using EAFramework.Driver;
@@ -42,29 +42,25 @@ namespace EAApplicationTest
         }
 
         [Test]
-        public async Task MyTest()
+        public async Task Test2()
         {
             var page = await _driver.Page;
+
             await page.GotoAsync("http://localhost:33084/");
 
             ProductListPage productListPage = new ProductListPage(page);
+            ProductPage productPage = new ProductPage(page);
+
 
             await productListPage.CreateProductAsync();
+            await productPage.CreateProduct("Speaker", "Gaming Speaker", 2000, "2");
+            await productPage.ClickCreate();
 
-            await page.GetByLabel("Name").ClickAsync();
-            await page.GetByLabel("Name").FillAsync("Not UPS");
-            await page.GetByLabel("Description").ClickAsync();
-            await page.GetByLabel("Description").FillAsync("Something related to a power supply");
-            await page.Locator("#Price").ClickAsync();
-            await page.Locator("#Price").FillAsync("135");
-            await page.GetByLabel("ProductType").SelectOptionAsync(new[] { "3" });
-            await page.GetByRole(AriaRole.Button, new() { Name = "Create" }).ClickAsync();
+            await productListPage.ClickProductFromList("Speaker");
 
-            await page.GetByRole(AriaRole.Row, new() { Name = "71 Not UPS Something related" }).GetByRole(AriaRole.Link).First.ClickAsync();
-            await page.GetByRole(AriaRole.Link, new() { Name = "Back to List" }).ClickAsync();
-            await page.GetByRole(AriaRole.Row, new() { Name = "71 Not UPS Something related" }).GetByRole(AriaRole.Link).Nth(1).ClickAsync();
-            await page.GetByRole(AriaRole.Link, new() { Name = "Edit" }).ClickAsync();
-            await page.GetByRole(AriaRole.Button, new() { Name = "Save" }).ClickAsync();
+
+            var element = productListPage.IsProductCreated("Speaker");
+            await Assertions.Expect(element).ToBeVisibleAsync();
         }
 
         [TearDown]
